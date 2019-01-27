@@ -5,8 +5,8 @@ using namespace std;
 
 int main()
 {
-	int length;
-	Person* list = get_table("table", length);
-	print(list, length);
-	delete [] list;
+	Table table;
+	table = get_table("table");
+	print(table);
+	delete [] table.rows;
 }

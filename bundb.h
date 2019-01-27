@@ -22,21 +22,38 @@ struct Person
 	short age;
 };
 
+struct Table{
+	Person* rows;
+	int length;
+	void del()
+	{
+		delete [] rows;
+		length = 0;
+	}
+
+	~Table()
+	{
+		delete [] rows;
+	}
+};
+
 // Returns it's length and changes Person pointer
-Person* get_table (const char* name, int& length)
+Table get_table (const char* name)
 {
 	fstream file(name, ios::binary|ios::in);
 	file.seekg(0, ios::end);
-	length = file.tellg() / sizeof(Person);
+	int length = file.tellg() / sizeof(Person);
 	file.seekg(0);
-	if (!length) return 0;
 	Person* array = new Person[length];
 	file.read((char*)array, length*sizeof(Person));
-	return array;
+	Table table = {array, length};
+	return table;
 }
 
-void print(Person* list, int length)
+void print(Table table)
 {
+	Person* list = table.rows;
+	int length = table.length;
 	// Setup for "|Name|Surname|Sex |Age|"
 	// Setup for "|Name|Surname|Male|Age|"
 	int widths[4] = {4, 7, 4, 3};
