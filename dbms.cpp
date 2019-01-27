@@ -5,8 +5,7 @@ using namespace std;
 
 int main()
 {
-	Table table;
-	table = get_table("table");
-	print(table);
+	Table table("table");
+	cout << table;
 	delete [] table.rows;
 }

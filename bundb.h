@@ -30,27 +30,28 @@ struct Table{
 		delete [] rows;
 		length = 0;
 	}
-
 	~Table()
 	{
 		delete [] rows;
 	}
+
+	Table(const char*);
 };
 
-// Returns it's length and changes Person pointer
-Table get_table (const char* name)
+Table::Table(const char* name)
 {
 	fstream file(name, ios::binary|ios::in);
 	file.seekg(0, ios::end);
-	int length = file.tellg() / sizeof(Person);
+	length = file.tellg() / sizeof(Person);
 	file.seekg(0);
-	Person* array = new Person[length];
-	file.read((char*)array, length*sizeof(Person));
-	Table table = {array, length};
-	return table;
+	rows = new Person[length];
+	file.read((char*)rows, length*sizeof(Person));
 }
 
-void print(Table table)
+// This is fake overload; function takes ostream instance, but doesn't use it
+// and returns as is. I did it because will have sence to convey instance to
+// printLine
+ostream& operator << (ostream& out, Table table)
 {
 	Person* list = table.rows;
 	int length = table.length;
@@ -59,10 +60,14 @@ void print(Table table)
 	int widths[4] = {4, 7, 4, 3};
 	for (int i = 0; i < length; i++)
 	{
-		if (strlen(list[i].fName) > widths[0]) widths[0] = strlen(list[i].fName);
-		if (strlen(list[i].sName) > widths[1]) widths[1] = strlen(list[i].sName);
-		if (!list[i].male) widths[2] = strlen("female");
-		if (decLength(list[i].age) > widths[3]) widths[3] = decLength(list[i].age);
+		if (strlen(list[i].fName) > widths[0])
+			widths[0] = strlen(list[i].fName);
+		if (strlen(list[i].sName) > widths[1])
+			widths[1] = strlen(list[i].sName);
+		if (!list[i].male)
+			widths[2] = strlen("female");
+		if (decLength(list[i].age) > widths[3])
+			widths[3] = decLength(list[i].age);
 	}
 
 	printLine(widths);
@@ -83,4 +88,5 @@ void print(Table table)
 		cout << '|' << endl;
 		printLine(widths);
 	}
+	return out;
 }
