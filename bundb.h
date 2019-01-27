@@ -55,8 +55,8 @@ ostream& operator << (ostream& out, Table table)
 {
 	Person* list = table.rows;
 	int length = table.length;
-	// Setup for "|Name|Surname|Sex |Age|"
-	// Setup for "|Name|Surname|Male|Age|"
+	// Setup for |Name|Surname|Sex |Age|
+	//           |Name|Surname|Male|Age|
 	int widths[4] = {4, 7, 4, 3};
 	for (int i = 0; i < length; i++)
 	{
@@ -88,5 +88,14 @@ ostream& operator << (ostream& out, Table table)
 		cout << '|' << endl;
 		printLine(widths);
 	}
+	return out;
+}
+
+ostream& operator << (ostream& out, Person pers)
+{
+	out << pers.fName << ", " << pers.sName << ", ";
+	if (pers.male) out << "male";
+	else out << "female";
+	out << ", " << pers.age;
 	return out;
 }

@@ -14,6 +14,10 @@ int main()
 	file.write((char*)table, sizeof(table));
 	*/
 	Table table("table");
+	// Feature: first char[] member of rows[0] becomes null after cout<<(Table) function
+	char feature[20];
+	strcpy(feature, table.rows[0].fName);
 	cout << table;
-	delete [] table.rows;
+	strcpy(table.rows[0].fName, feature);
+	table.del();
 }
