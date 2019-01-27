@@ -5,5 +5,8 @@ using namespace std;
 
 int main()
 {
-	if (get_table(" ") == nullptr) cout << "NULL";
+	int length;
+	Person* list = get_table("table", length);
+	print(list, length);
+	delete [] list;
 }
