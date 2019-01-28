@@ -39,6 +39,7 @@ struct Table{
 	Table select(const char*, const int, bool comp(const int, const int));
 	Table del(const char*, const char*, bool comp(const char*, const char*));
 	Table del(const char*, const int, bool comp(const int, const int));
+	void insert(const char*, const char*, const bool, const int);
 	void drop();
 };
 
@@ -228,6 +229,27 @@ Table Table::del (
 				newTable.rows[np++] = rows[row];
 	}
 	return newTable;
+}
+
+void Table::insert (const char* fN, const char* sN, const bool m, const int a)
+{
+	if (strlen(fN) < 1)
+		throw invalid_argument("Name must be at least 1 symbol");
+	if (strlen(sN) < 1)
+		throw invalid_argument("Surname must be at least 1 symbol");
+	if (m != 0 && m != 1)
+		throw invalid_argument("Bool sex must be 1 or 0");
+	if (a < 1)
+		throw invalid_argument("Age cannot be negative or zero");
+
+	Person* newRows = new Person[length+1];
+	memcpy(newRows, rows, sizeof(Person)*length);
+	strcpy(newRows[length].fName, fN);
+	strcpy(newRows[length].sName, sN);
+	newRows[length].male = m;
+	newRows[length].age = a;
+	rows = newRows;
+	length++;
 }
 
 void Table::drop()

@@ -12,8 +12,10 @@ int main()
 	};
 	fstream file("table", ios::binary|ios::out|ios::trunc);
 	file.write((char*)load, sizeof(load));*/
-	///
+
 	Table table("table");
-	table.del("age", 16, gt).print(1);
+	table.print(0);
+	table.insert("Cir", "Noisbaka", 0, 60);
+	table.print(0);
 	table.drop();
 }
