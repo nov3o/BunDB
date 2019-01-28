@@ -16,6 +16,16 @@ struct Person
 	short age;
 };
 
+bool operator== (Person p1, Person p2)
+{
+	if (strcmp(p1.fName, p2.fName)) return 0;
+	if (strcmp(p1.sName, p2.sName)) return 0;
+	if (p1.male != p2.male) return 0;
+	if (p1.age != p2.age) return 0;
+	return 1;
+}
+
+
 struct Table{
 	Person* rows;
 	int length;
@@ -27,6 +37,8 @@ struct Table{
 	void print(bool);
 	Table select(const char*, const char*, bool comp(const char*, const char*));
 	Table select(const char*, const int, bool comp(const int, const int));
+	Table del(const char*, const char*, bool comp(const char*, const char*));
+	Table del(const char*, const int, bool comp(const int, const int));
 	void drop();
 };
 
@@ -46,7 +58,6 @@ Table::~Table()
 {
 	delete [] rows;
 }
-
 
 void Table::print (bool fieldNames=1)
 {
@@ -95,8 +106,7 @@ void Table::print (bool fieldNames=1)
 	}
 }
 
-// comps: eq, le, lt, ge, gt, ne(!=),
-// 		sw(startswith), ew(endswith), in, ni(not in)
+// comps: eq, le, lt, ge, gt, ne(!=), sw(startswith), ew(endsw), in, ni(!in)
 // We can't check validity of functions
 Table Table::select (
 	const char* field, const char* value, bool comp(const char*, const char*)
@@ -153,6 +163,68 @@ Table Table::select (
 		newTable.rows = new Person[p];
 		for (int np = 0, row = 0; np < p; row++)
 			if (comp(value, rows[row].age))
+				newTable.rows[np++] = rows[row];
+	}
+	return newTable;
+}
+
+// Just inverted select
+Table Table::del (
+	const char* field, const char* value, bool comp(const char*, const char*)
+	)
+{
+	check(field, value);
+	// For all comps, for only fName and sName fields
+	int p = 0;
+	Table newTable;
+	if (strcmp(field, "fName") == 0) {
+		for (int row = 0; row < length; row++)
+			if (!comp(value, rows[row].fName)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (!comp(value, rows[row].fName))
+				newTable.rows[np++] = rows[row];
+	}
+	else {
+		for (int row = 0; row < length; row++)
+			if (!comp(value, rows[row].sName)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (!comp(value, rows[row].sName))
+				newTable.rows[np++] = rows[row];
+	}
+	return newTable;
+}
+
+// Just inverted select
+Table Table::del (
+	const char* field, const int value, bool comp(const int, const int)
+	)
+{
+	check(field, value);
+	// for male, age fields
+	// for eq, le, lt, ge, gt, ne(!=) comps
+	int p = 0;
+	Table newTable;
+	// Only for eq, ne comps
+	if (strcmp(field, "male") == 0) {
+		for (int row = 0; row < length; row++)
+			if (!comp(value, rows[row].male)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (!comp(value, rows[row].male))
+				newTable.rows[np++] = rows[row];
+	}
+	else if (strcmp(field, "age") == 0) {
+		for (int row = 0; row < length; row++)
+			if (!comp(value, rows[row].age)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (!comp(value, rows[row].age))
 				newTable.rows[np++] = rows[row];
 	}
 	return newTable;

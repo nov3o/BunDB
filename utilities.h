@@ -72,7 +72,6 @@ bool ew (const char* a, const char* b)
 	int bl = strlen(b);
 	for (int i = 0; i < strlen(a); i++)
 	{
-		cout << a[al-1-i] << b[bl-1-i] << endl;
 		if (b[bl-1-i] != a[al-1-i]) return 0;
 	}
 	return 1;

@@ -14,6 +14,6 @@ int main()
 	file.write((char*)load, sizeof(load));*/
 	///
 	Table table("table");
-	table.select("sName", "Do", sw).print(0); // Query example
+	table.del("age", 16, gt).print(1);
 	table.drop();
 }
