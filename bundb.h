@@ -16,6 +16,7 @@ using namespace std;
 
 struct Person
 {
+	// short id;
 	char fName[20];
 	char sName[20];
 	bool male;
@@ -25,17 +26,14 @@ struct Person
 struct Table{
 	Person* rows;
 	int length;
-	void del()
-	{
-		delete [] rows;
-		length = 0;
-	}
-	~Table()
-	{
-		delete [] rows;
-	}
 
 	Table(const char*);
+	Table();
+	~Table();
+
+	Table select(const char*, const char*, bool comp(const char*, const char*));
+	Table select(const char*, const int, bool comp(const int, const int));
+	void drop();
 };
 
 Table::Table(const char* name)
@@ -46,6 +44,61 @@ Table::Table(const char* name)
 	file.seekg(0);
 	rows = new Person[length];
 	file.read((char*)rows, length*sizeof(Person));
+}
+
+Table::Table() { length = 0; }
+
+Table::~Table()
+{
+	delete [] rows;
+}
+
+
+// comps: eq, le, lt, re, rt, ne(!=),
+// 		sw(startswith), ew(endswith), in, ni(not in)
+// We can't check validity of functions
+Table Table::select (
+	const char* field, const char* value, bool comp(const char*, const char*)
+	)
+{
+	check(field, value);
+	// For all comps, for only fName and sName fields
+	int p;
+	Table newTable;
+	if (strcmp(field, "fName") == 0) {
+		for (int row = 0; row < length; row++)
+			if (comp(value, rows[row].fName)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (comp(value, rows[row].fName))
+				newTable.rows[np] = rows[row];
+	}
+	else {
+		for (int row = 0; row < length; row++)
+			if (comp(value, rows[row].sName)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (comp(value, rows[row].sName))
+				newTable.rows[np] = rows[row];
+	}
+	return newTable; // Change it
+}
+
+Table Table::select (
+	const char* field, const int value, bool comp(const int, const int)
+	)
+{
+	/*
+		s0me c0de
+	*/
+}
+
+void Table::drop()
+{
+	delete [] rows;
+	length = 0;
 }
 
 // This is fake overload; function takes ostream instance, but doesn't use it
@@ -93,9 +146,13 @@ ostream& operator << (ostream& out, Table table)
 
 ostream& operator << (ostream& out, Person pers)
 {
-	out << pers.fName << ", " << pers.sName << ", ";
-	if (pers.male) out << "male";
-	else out << "female";
-	out << ", " << pers.age;
+	int widths[4] = {strlen(pers.fName), strlen(pers.sName), 4, decLength(pers.age)};
+	if (!pers.male) widths[2] = 6;
+	printLine(widths);
+	cout << "|" << pers.fName << "|" << pers.sName << "|";
+	if (pers.male) cout << "Male";
+	else cout << "Female";
+	cout << "|" << pers.age << "|" << endl;
+	printLine(widths);
 	return out;
 }
