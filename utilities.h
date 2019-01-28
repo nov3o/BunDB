@@ -68,10 +68,13 @@ bool sw (const char* a, const char* b)
 bool ew (const char* a, const char* b)
 {
 	if (strlen(b) < strlen(a)) return 0;
-	int al = strlen(b);
+	int al = strlen(a);
 	int bl = strlen(b);
 	for (int i = 0; i < strlen(a); i++)
-		if (b[al-1-i] != a[bl-1-i]) return 0;
+	{
+		cout << a[al-1-i] << b[bl-1-i] << endl;
+		if (b[bl-1-i] != a[al-1-i]) return 0;
+	}
 	return 1;
 }
 bool in (const char* a, const char* b)

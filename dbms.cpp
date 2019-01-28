@@ -12,8 +12,8 @@ int main()
 	};
 	fstream file("table", ios::binary|ios::out|ios::trunc);
 	file.write((char*)load, sizeof(load));*/
-
+	///
 	Table table("table");
-	table.select("fName", "Jo", in).print(1);
+	table.select("sName", "Do", sw).print(0); // Query example
 	table.drop();
 }
