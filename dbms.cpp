@@ -14,6 +14,6 @@ int main()
 	file.write((char*)load, sizeof(load));*/
 
 	Table table("table");
-	table.print(0);
+	table.select("fName", "Jo", in).print(1);
 	table.drop();
 }

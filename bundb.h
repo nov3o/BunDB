@@ -1,11 +1,3 @@
-/*
-	Here functions' modify status
-	Modifies:
-		get_table
-	Doesn't:
-		print
-*/
-
 #include <fstream>
 #include <iostream>
 #include <cstring>
@@ -103,7 +95,7 @@ void Table::print (bool fieldNames=1)
 	}
 }
 
-// comps: eq, le, lt, re, rt, ne(!=),
+// comps: eq, le, lt, ge, gt, ne(!=),
 // 		sw(startswith), ew(endswith), in, ni(not in)
 // We can't check validity of functions
 Table Table::select (
@@ -112,7 +104,7 @@ Table Table::select (
 {
 	check(field, value);
 	// For all comps, for only fName and sName fields
-	int p;
+	int p = 0;
 	Table newTable;
 	if (strcmp(field, "fName") == 0) {
 		for (int row = 0; row < length; row++)
@@ -121,7 +113,7 @@ Table Table::select (
 		newTable.rows = new Person[p];
 		for (int np = 0, row = 0; np < p; row++)
 			if (comp(value, rows[row].fName))
-				newTable.rows[np] = rows[row];
+				newTable.rows[np++] = rows[row];
 	}
 	else {
 		for (int row = 0; row < length; row++)
@@ -130,7 +122,7 @@ Table Table::select (
 		newTable.rows = new Person[p];
 		for (int np = 0, row = 0; np < p; row++)
 			if (comp(value, rows[row].sName))
-				newTable.rows[np] = rows[row];
+				newTable.rows[np++] = rows[row];
 	}
 	return newTable;
 }
@@ -139,9 +131,31 @@ Table Table::select (
 	const char* field, const int value, bool comp(const int, const int)
 	)
 {
-	/*
-		s0me c0de
-	*/
+	check(field, value);
+	// for male, age fields
+	// for eq, le, lt, ge, gt, ne(!=) comps
+	int p = 0;
+	Table newTable;
+	// Only for eq, ne comps
+	if (strcmp(field, "male") == 0) {
+		for (int row = 0; row < length; row++)
+			if (comp(value, rows[row].male)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (comp(value, rows[row].male))
+				newTable.rows[np++] = rows[row];
+	}
+	else if (strcmp(field, "age") == 0) {
+		for (int row = 0; row < length; row++)
+			if (comp(value, rows[row].age)) p++;
+		newTable.length = p;
+		newTable.rows = new Person[p];
+		for (int np = 0, row = 0; np < p; row++)
+			if (comp(value, rows[row].age))
+				newTable.rows[np++] = rows[row];
+	}
+	return newTable;
 }
 
 void Table::drop()
