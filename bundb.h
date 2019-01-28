@@ -16,6 +16,7 @@ using namespace std;
 
 struct Person
 {
+	// I'll add id later
 	// short id;
 	char fName[20];
 	char sName[20];
@@ -31,6 +32,7 @@ struct Table{
 	Table();
 	~Table();
 
+	void print(bool);
 	Table select(const char*, const char*, bool comp(const char*, const char*));
 	Table select(const char*, const int, bool comp(const int, const int));
 	void drop();
@@ -53,6 +55,53 @@ Table::~Table()
 	delete [] rows;
 }
 
+
+void Table::print (bool fieldNames=1)
+{
+	if (!length) return;
+	int widths[4];
+	if (fieldNames)
+	{
+		widths[0]=4; widths[1]=7; widths[2]=4; widths[3]=3;
+	}
+	else
+	{
+		widths[0]=1; widths[1]=1; widths[2]=4; widths[3]=1;
+	}
+	for (int i = 0; i < length; i++)
+	{
+		if (strlen(rows[i].fName) > widths[0])
+			widths[0] = strlen(rows[i].fName);
+		if (strlen(rows[i].sName) > widths[1])
+			widths[1] = strlen(rows[i].sName);
+		if (!rows[i].male)
+			widths[2] = strlen("female");
+		if (decLength(rows[i].age) > widths[3])
+			widths[3] = decLength(rows[i].age);
+	}
+
+	if (fieldNames)
+	{
+		printLine(widths);
+		cout << '|' << setw(widths[0]) << left << "Name";
+		cout << '|' << setw(widths[1]) << left << "Surname";
+		cout << '|' << setw(widths[2]) << left << "Sex";
+		cout << '|' << setw(widths[3]) << left << "Age";
+		cout << '|' << endl;
+		printLine(widths);
+	}
+	printLine(widths);
+	for (int r = 0; r < length; r++) {
+		cout << '|' << setw(widths[0]) << left << rows[r].fName;
+		cout << '|' << setw(widths[1]) << left << rows[r].sName;
+		cout << '|' << setw(widths[2]) << left;
+		if (rows[r].male) cout << "Male";
+		else cout << "Female";
+		cout << '|' << setw(widths[3]) << left << rows[r].age;
+		cout << '|' << endl;
+		printLine(widths);
+	}
+}
 
 // comps: eq, le, lt, re, rt, ne(!=),
 // 		sw(startswith), ew(endswith), in, ni(not in)
@@ -83,7 +132,7 @@ Table Table::select (
 			if (comp(value, rows[row].sName))
 				newTable.rows[np] = rows[row];
 	}
-	return newTable; // Change it
+	return newTable;
 }
 
 Table Table::select (
@@ -99,49 +148,6 @@ void Table::drop()
 {
 	delete [] rows;
 	length = 0;
-}
-
-// This is fake overload; function takes ostream instance, but doesn't use it
-// and returns as is. I did it because will have sence to convey instance to
-// printLine
-ostream& operator << (ostream& out, Table table)
-{
-	Person* list = table.rows;
-	int length = table.length;
-	// Setup for |Name|Surname|Sex |Age|
-	//           |Name|Surname|Male|Age|
-	int widths[4] = {4, 7, 4, 3};
-	for (int i = 0; i < length; i++)
-	{
-		if (strlen(list[i].fName) > widths[0])
-			widths[0] = strlen(list[i].fName);
-		if (strlen(list[i].sName) > widths[1])
-			widths[1] = strlen(list[i].sName);
-		if (!list[i].male)
-			widths[2] = strlen("female");
-		if (decLength(list[i].age) > widths[3])
-			widths[3] = decLength(list[i].age);
-	}
-
-	printLine(widths);
-	cout << '|' << setw(widths[0]) << left << "Name";
-	cout << '|' << setw(widths[1]) << left << "Surname";
-	cout << '|' << setw(widths[2]) << left << "Sex";
-	cout << '|' << setw(widths[3]) << left << "Age";
-	cout << '|' << endl;
-	printLine(widths);
-	printLine(widths);
-	for (int r = 0; r < length; r++) {
-		cout << '|' << setw(widths[0]) << left << list[r].fName;
-		cout << '|' << setw(widths[1]) << left << list[r].sName;
-		cout << '|' << setw(widths[2]) << left;
-		if (list[r].male) cout << "Male";
-		else cout << "Female";
-		cout << '|' << setw(widths[3]) << left << list[r].age;
-		cout << '|' << endl;
-		printLine(widths);
-	}
-	return out;
 }
 
 ostream& operator << (ostream& out, Person pers)
