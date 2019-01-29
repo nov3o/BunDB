@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include "models.h"
 
 using namespace std;
 
@@ -30,14 +31,14 @@ bool in (const char* word, const char** array, const int length)
 //		ew(endswith), in(contains), ni(!in)
 // fileds: id, fName, sName, male, age
 // Undebugged
-void check (const char* field, const char* value)
+void selCheck (const char* field, const char* value)
 {
 	const char* fields[2] = {"fName", "sName"};
 	if (!in(field, fields, 2))
 		throw invalid_argument("This field doesn't exist or wrong for this value");
 }
 
-void check (const char* field, const int value)
+void selCheck (const char* field, const int value)
 {
 	const char* fields[2] = {"male", "age"};
 	if (!in(field, fields, 2))
@@ -46,6 +47,14 @@ void check (const char* field, const int value)
 		throw invalid_argument("In normal society there are only two genders");
 	if (value < 0)
 		throw invalid_argument("int/bool field of current table can't be negative");
+}
+
+bool sortCheck (const char* field)
+{
+	const char* validFields[] = {"fName", "sName", "male", "age"};
+	if (!in(field, validFields, 4))
+		throw invalid_argument("Unknown field");
+	return 1;
 }
 
 // comps: eq, le, lt, ge, gt, ne(!=), sw(startswith),
@@ -92,3 +101,10 @@ bool le (const int a, const int b) { return b <= a; }
 bool lt (const int a, const int b) { return b < a; }
 bool ge (const int a, const int b) { return b >= a; }
 bool gt (const int a, const int b) { return b > a; }
+
+void swapPers (Table& table, int pos1, int pos2)
+{
+	Person ps = table.rows[pos1];
+	table.rows[pos1] = table.rows[pos2];
+	table.rows[pos2] = ps;
+}

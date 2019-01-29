@@ -3,45 +3,9 @@
 #include <cstring>
 #include <iomanip>
 #include "utilities.h"
+// #include "models.h" // Cause it's included in utilities.h
 
 using namespace std;
-
-struct Person
-{
-	// I'll add id later
-	// short id;
-	char fName[20];
-	char sName[20];
-	bool male;
-	short age;
-};
-
-bool operator== (Person p1, Person p2)
-{
-	if (strcmp(p1.fName, p2.fName)) return 0;
-	if (strcmp(p1.sName, p2.sName)) return 0;
-	if (p1.male != p2.male) return 0;
-	if (p1.age != p2.age) return 0;
-	return 1;
-}
-
-
-struct Table{
-	Person* rows;
-	int length;
-
-	Table(const char*);
-	Table();
-	~Table();
-
-	void print(bool);
-	Table select(const char*, const char*, bool comp(const char*, const char*));
-	Table select(const char*, const int, bool comp(const int, const int));
-	Table del(const char*, const char*, bool comp(const char*, const char*));
-	Table del(const char*, const int, bool comp(const int, const int));
-	void insert(const char*, const char*, const bool, const int);
-	void drop();
-};
 
 Table::Table(const char* name)
 {
@@ -113,7 +77,7 @@ Table Table::select (
 	const char* field, const char* value, bool comp(const char*, const char*)
 	)
 {
-	check(field, value);
+	selCheck(field, value);
 	// For all comps, for only fName and sName fields
 	int p = 0;
 	Table newTable;
@@ -142,7 +106,7 @@ Table Table::select (
 	const char* field, const int value, bool comp(const int, const int)
 	)
 {
-	check(field, value);
+	selCheck(field, value);
 	// for male, age fields
 	// for eq, le, lt, ge, gt, ne(!=) comps
 	int p = 0;
@@ -174,7 +138,7 @@ Table Table::del (
 	const char* field, const char* value, bool comp(const char*, const char*)
 	)
 {
-	check(field, value);
+	selCheck(field, value);
 	// For all comps, for only fName and sName fields
 	int p = 0;
 	Table newTable;
@@ -204,7 +168,7 @@ Table Table::del (
 	const char* field, const int value, bool comp(const int, const int)
 	)
 {
-	check(field, value);
+	selCheck(field, value);
 	// for male, age fields
 	// for eq, le, lt, ge, gt, ne(!=) comps
 	int p = 0;
@@ -252,13 +216,145 @@ void Table::insert (const char* fN, const char* sN, const bool m, const int a)
 	length++;
 }
 
+// In asc male sort first will be Female
+Table Table::sort (const char* field, bool asc=1)
+{
+	sortCheck(field);
+	Table tbl = *this;
+	bool swapped;
+	// Copy-pasting is bad, but I don't know how to perform such action
+	// I use bubble sort, because i need to save rows' order in cases where occur
+	// same values and it will be efficent in multiple sort queries
+	if (field == "fName")
+	{
+		if (asc)
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = 0; el < length-i-1; el++)
+					if (strcmp(tbl.rows[el].fName, tbl.rows[el+1].fName) > 0) {
+						swapPers(tbl, el, el+1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = length-1; el > 0; el--)
+					if (strcmp(tbl.rows[el].fName, tbl.rows[el-1].fName) > 0)
+					{
+						swapPers(tbl, el, el-1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+	}
+	else if (field == "sName")
+	{
+		if (asc)
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = 0; el < length-i-1; el++)
+					if (strcmp(tbl.rows[el].sName, tbl.rows[el+1].sName) > 0) {
+						swapPers(tbl, el, el+1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = length-1; el > 0; el--)
+					if (strcmp(tbl.rows[el].sName, tbl.rows[el-1].sName) > 0)
+					{
+						swapPers(tbl, el, el-1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+	}
+	else if (field == "male")
+	{
+		if (asc)
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = 0; el < length-i-1; el++)
+					if (tbl.rows[el].male > tbl.rows[el+1].male) {
+						swapPers(tbl, el, el+1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = length-1; el > 0; el--)
+					if (tbl.rows[el].male > tbl.rows[el-1].male)
+					{
+						swapPers(tbl, el, el-1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+	}
+	else
+	{
+		if (asc)
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = 0; el < length-i-1; el++)
+					if (tbl.rows[el].age > tbl.rows[el+1].age) {
+						swapPers(tbl, el, el+1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < length-1; i++)
+			{
+				swapped = 0;
+				for (int el = length-1; el > 0; el--)
+					if (tbl.rows[el].age > tbl.rows[el-1].age)
+					{
+						swapPers(tbl, el, el-1);
+						swapped = 1;
+					}
+				if (!swapped) break;
+			}
+		}
+	}
+	return tbl;
+}
+
 void Table::drop()
 {
 	delete [] rows;
 	length = 0;
 }
 
-ostream& operator << (ostream& out, Person pers)
+ostream& operator<< (ostream& out, Person pers)
 {
 	int widths[4] = {strlen(pers.fName), strlen(pers.sName), 4, decLength(pers.age)};
 	if (!pers.male) widths[2] = 6;
