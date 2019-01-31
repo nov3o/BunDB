@@ -25,6 +25,7 @@ struct Table{
 	Table& del(const char*, const char*, bool comp(const char*, const char*));
 	Table& del(const char*, const int, bool comp(const int, const int));
 	Table& insert(char*, char*, bool, int);
+	Table& insert(Person*, const int);
 	Table sort(const char*, const bool);
 	void drop();
 };

@@ -238,6 +238,30 @@ Table& Table::insert (char* fN, char* sN, bool m, int a)
 	return *this;
 }
 
+Table& Table::insert (Person* rowList, const int listLength)
+{
+	for (int i = 0; i < listLength; i++)
+	{
+		if (strlen(rowList[i].fName) < 1)
+			throw invalid_argument("Name must be at least 1 symbol");
+		if (strlen(rowList[i].sName) < 1)
+			throw invalid_argument("Surname must be at least 1 symbol");
+		if (rowList[i].male != 0 && rowList[i].male != 1)
+			throw invalid_argument("Bool sex must be 1 or 0");
+		if (rowList[i].age < 1)
+			throw invalid_argument("Age cannot be negative or zero");
+	}
+
+	Person* newRows = new Person[length+listLength];
+	memcpy(newRows, rows, sizeof(Person)*length);
+	for (int i = 0; i < listLength; i++)
+		newRows[length+i] = rowList[i];
+	delete [] rows;
+	rows = newRows;
+	length += listLength;
+	return *this;
+}
+
 // In asc male sort first will be Female
 Table Table::sort (const char* field, const bool asc=1)
 {

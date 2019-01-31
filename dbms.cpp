@@ -25,7 +25,12 @@ int main()
 {
 	// load();
 	Table table("table"); ////2/
-	table.insert("Oleg", "Benedictoxygenipropanol", 1, 99);
+	Person list[] = {
+		{"John", "Watson", 1, 30},
+		{"Sherlock", "Holmes", 1, 40},
+		{"Qwerty", "Poiu", 0, 43}
+	};
+	table.insert(list, 3);
 	table.print();
 	table.drop();
 }
