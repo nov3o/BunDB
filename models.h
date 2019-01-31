@@ -18,9 +18,9 @@ struct Table{
 	void print(bool);
 	Table select(const char*, const char*, bool comp(const char*, const char*));
 	Table select(const char*, const int, bool comp(const int, const int));
-	Table del(const char*, const char*, bool comp(const char*, const char*));
-	Table del(const char*, const int, bool comp(const int, const int));
-	void insert(const char*, const char*, const bool, const int);
+	Table& del(const char*, const char*, bool comp(const char*, const char*));
+	Table& del(const char*, const int, bool comp(const int, const int));
+	Table& insert(const char*, const char*, const bool, const int);
 	Table sort(const char*, bool);
 	void drop();
 };

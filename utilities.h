@@ -61,6 +61,7 @@ bool sortCheck (const char* field)
 //		ew(endswith), in(contains), ni(!in)
 
 // For all comps: bool <comp> (<val>, <row member's val>)
+// for sw, ew, in: bool <comp> (<substr>, <str>)
 bool eq (const char* a, const char* b) { return !strcmp(b, a); }
 bool ne (const char* a, const char* b) { return strcmp(b, a); }
 bool le (const char* a, const char* b) { return strcmp(b, a) < 1; }
@@ -87,10 +88,15 @@ bool ew (const char* a, const char* b)
 }
 bool in (const char* a, const char* b)
 {
-	int len = strlen(b);
-	for (int i = 0; i < strlen(a)-len; i++)
-		if (sw(a, b++)) return 1;
-	b -= strlen(a)-len;
+	if (strlen(b) < strlen(a)) return 0;
+	int f;
+	for (int s = 0; s < strlen(b)-strlen(a)+1; s++)
+	{
+		f = 0;
+		for (int ss = 0; ss < strlen(a); ss++)
+			if (b[s+ss] == a[ss]) f++;
+		if (f == strlen(a)) return 1;
+	}
 	return 0;
 }
 bool ni (const char* a, const char* b) { return !in(a, b); }

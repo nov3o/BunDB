@@ -14,7 +14,7 @@ void load()
 		{"Reimu", "Hakurei", 0, 14},
 		{"Sunn", "Deim", 1, 14},
 		{"Ruri", "Gokou", 0, 14},
-		{"Rikardo", "Milos", 1, 42},
+		{"Rekardo", "Milos", 1, 42},
 	};
 	fstream file("table", ios::binary|ios::out|ios::trunc);
 	file.write((char*)load, sizeof(load));
@@ -25,6 +25,7 @@ int main()
 {
 	// load();
 	Table table("table");
-	table.sort("fName", 0).sort("age").print(0);
+	table.del("age", 14, eq).del("male", 0, eq);
+	table.print(0);
 	table.drop();
 }

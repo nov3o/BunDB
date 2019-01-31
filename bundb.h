@@ -81,7 +81,8 @@ Table Table::select (
 	// For all comps, for only fName and sName fields
 	int p = 0;
 	Table newTable;
-	if (strcmp(field, "fName") == 0) {
+	if (strcmp(field, "fName") == 0)
+	{
 		for (int row = 0; row < length; row++)
 			if (comp(value, rows[row].fName)) p++;
 		newTable.length = p;
@@ -90,7 +91,8 @@ Table Table::select (
 			if (comp(value, rows[row].fName))
 				newTable.rows[np++] = rows[row];
 	}
-	else {
+	else
+	{
 		for (int row = 0; row < length; row++)
 			if (comp(value, rows[row].sName)) p++;
 		newTable.length = p;
@@ -112,7 +114,8 @@ Table Table::select (
 	int p = 0;
 	Table newTable;
 	// Only for eq, ne comps
-	if (strcmp(field, "male") == 0) {
+	if (strcmp(field, "male") == 0)
+	{
 		for (int row = 0; row < length; row++)
 			if (comp(value, rows[row].male)) p++;
 		newTable.length = p;
@@ -121,7 +124,8 @@ Table Table::select (
 			if (comp(value, rows[row].male))
 				newTable.rows[np++] = rows[row];
 	}
-	else if (strcmp(field, "age") == 0) {
+	else if (strcmp(field, "age") == 0)
+	{
 		for (int row = 0; row < length; row++)
 			if (comp(value, rows[row].age)) p++;
 		newTable.length = p;
@@ -134,37 +138,45 @@ Table Table::select (
 }
 
 // Just inverted select
-Table Table::del (
+Table& Table::del (
 	const char* field, const char* value, bool comp(const char*, const char*)
 	)
 {
 	selCheck(field, value);
 	// For all comps, for only fName and sName fields
 	int p = 0;
-	Table newTable;
-	if (strcmp(field, "fName") == 0) {
+	int newLength;
+	int* rowIdxs;
+	if (strcmp(field, "fName") == 0)
+	{
 		for (int row = 0; row < length; row++)
 			if (!comp(value, rows[row].fName)) p++;
-		newTable.length = p;
-		newTable.rows = new Person[p];
+		newLength = p;
+		rowIdxs = new int[newLength];
 		for (int np = 0, row = 0; np < p; row++)
 			if (!comp(value, rows[row].fName))
-				newTable.rows[np++] = rows[row];
+				rowIdxs[np++] = row;
 	}
-	else {
+	else
+	{
 		for (int row = 0; row < length; row++)
 			if (!comp(value, rows[row].sName)) p++;
-		newTable.length = p;
-		newTable.rows = new Person[p];
+		newLength = p;
+		rowIdxs = new int[newLength];
 		for (int np = 0, row = 0; np < p; row++)
 			if (!comp(value, rows[row].sName))
-				newTable.rows[np++] = rows[row];
+				rowIdxs[np++] = row;
 	}
-	return newTable;
+	Person* newRows = new Person[newLength];
+	for (int i = 0; i < newLength; newRows[i++] = rows[rowIdxs[i]]);
+	this->drop();
+	length = newLength;
+	rows = newRows;
+	return *this;
 }
 
 // Just inverted select
-Table Table::del (
+Table& Table::del (
 	const char* field, const int value, bool comp(const int, const int)
 	)
 {
@@ -172,30 +184,38 @@ Table Table::del (
 	// for male, age fields
 	// for eq, le, lt, ge, gt, ne(!=) comps
 	int p = 0;
-	Table newTable;
+	int newLength;
+	int* rowIdxs;
 	// Only for eq, ne comps
-	if (strcmp(field, "male") == 0) {
+	if (strcmp(field, "male") == 0)
+	{
 		for (int row = 0; row < length; row++)
 			if (!comp(value, rows[row].male)) p++;
-		newTable.length = p;
-		newTable.rows = new Person[p];
+		newLength = p;
+		rowIdxs = new int[newLength];
 		for (int np = 0, row = 0; np < p; row++)
 			if (!comp(value, rows[row].male))
-				newTable.rows[np++] = rows[row];
+				rowIdxs[np++] = row;
 	}
-	else if (strcmp(field, "age") == 0) {
+	else if (strcmp(field, "age") == 0)
+	{
 		for (int row = 0; row < length; row++)
 			if (!comp(value, rows[row].age)) p++;
-		newTable.length = p;
-		newTable.rows = new Person[p];
+		newLength = p;
+		rowIdxs = new int[newLength];
 		for (int np = 0, row = 0; np < p; row++)
 			if (!comp(value, rows[row].age))
-				newTable.rows[np++] = rows[row];
+				rowIdxs[np++] = row;
 	}
-	return newTable;
+	Person* newRows = new Person[newLength];
+	for (int i = 0; i < newLength; newRows[i++] = rows[rowIdxs[i]]);
+	this->drop();
+	length = newLength;
+	rows = newRows;
+	return *this;
 }
 
-void Table::insert (const char* fN, const char* sN, const bool m, const int a)
+Table& Table::insert (const char* fN, const char* sN, const bool m, const int a)
 {
 	if (strlen(fN) < 1)
 		throw invalid_argument("Name must be at least 1 symbol");
@@ -214,6 +234,7 @@ void Table::insert (const char* fN, const char* sN, const bool m, const int a)
 	newRows[length].age = a;
 	rows = newRows;
 	length++;
+	return *this;
 }
 
 // In asc male sort first will be Female
