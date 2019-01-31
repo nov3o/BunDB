@@ -47,7 +47,6 @@ void Table::print (bool fieldNames=1)
 		if (decLength(rows[i].age) > widths[3])
 			widths[3] = decLength(rows[i].age);
 	}
-
 	if (fieldNames)
 	{
 		printLine(widths);
@@ -63,8 +62,7 @@ void Table::print (bool fieldNames=1)
 		cout << '|' << setw(widths[0]) << left << rows[r].fName;
 		cout << '|' << setw(widths[1]) << left << rows[r].sName;
 		cout << '|' << setw(widths[2]) << left;
-		if (rows[r].male) cout << "Male";
-		else cout << "Female";
+		(rows[r].male)? cout << "Male": cout << "Female";
 		cout << '|' << setw(widths[3]) << left << rows[r].age;
 		cout << '|' << endl;
 		printLine(widths);
@@ -169,9 +167,10 @@ Table& Table::del (
 	}
 	Person* newRows = new Person[newLength];
 	for (int i = 0; i < newLength; newRows[i++] = rows[rowIdxs[i]]);
-	this->drop();
+	delete [] rows;
 	length = newLength;
 	rows = newRows;
+	delete [] rowIdxs;
 	return *this;
 }
 
@@ -209,13 +208,14 @@ Table& Table::del (
 	}
 	Person* newRows = new Person[newLength];
 	for (int i = 0; i < newLength; newRows[i++] = rows[rowIdxs[i]]);
-	this->drop();
+	delete [] rows;
 	length = newLength;
 	rows = newRows;
+	delete [] rowIdxs;
 	return *this;
 }
 
-Table& Table::insert (const char* fN, const char* sN, const bool m, const int a)
+Table& Table::insert (char* fN, char* sN, bool m, int a)
 {
 	if (strlen(fN) < 1)
 		throw invalid_argument("Name must be at least 1 symbol");
@@ -228,17 +228,18 @@ Table& Table::insert (const char* fN, const char* sN, const bool m, const int a)
 
 	Person* newRows = new Person[length+1];
 	memcpy(newRows, rows, sizeof(Person)*length);
-	strcpy(newRows[length].fName, fN);
-	strcpy(newRows[length].sName, sN);
+	flxcpy(newRows[length].fName, fN, 20);
+	flxcpy(newRows[length].sName, sN, 20);
 	newRows[length].male = m;
 	newRows[length].age = a;
+	delete [] rows;
 	rows = newRows;
 	length++;
 	return *this;
 }
 
 // In asc male sort first will be Female
-Table Table::sort (const char* field, bool asc=1)
+Table Table::sort (const char* field, const bool asc=1)
 {
 	sortCheck(field);
 	Table tbl = *this;
@@ -373,17 +374,4 @@ void Table::drop()
 {
 	delete [] rows;
 	length = 0;
-}
-
-ostream& operator<< (ostream& out, Person pers)
-{
-	int widths[4] = {strlen(pers.fName), strlen(pers.sName), 4, decLength(pers.age)};
-	if (!pers.male) widths[2] = 6;
-	printLine(widths);
-	cout << "|" << pers.fName << "|" << pers.sName << "|";
-	if (pers.male) cout << "Male";
-	else cout << "Female";
-	cout << "|" << pers.age << "|" << endl;
-	printLine(widths);
-	return out;
 }

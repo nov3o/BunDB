@@ -1,3 +1,7 @@
+// Actually fName and sName can have up to 19 non-null symbols.
+// Anyway last symbol cutting off for value separating in memory
+// due to outputtipng  purposes. I can output 20 symbols one-by-one, but
+// it much worse than just outputting as char pointer until null-byte
 struct Person
 {
 	// short id;
@@ -20,7 +24,7 @@ struct Table{
 	Table select(const char*, const int, bool comp(const int, const int));
 	Table& del(const char*, const char*, bool comp(const char*, const char*));
 	Table& del(const char*, const int, bool comp(const int, const int));
-	Table& insert(const char*, const char*, const bool, const int);
-	Table sort(const char*, bool);
+	Table& insert(char*, char*, bool, int);
+	Table sort(const char*, const bool);
 	void drop();
 };

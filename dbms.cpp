@@ -24,8 +24,8 @@ void load()
 int main()
 {
 	// load();
-	Table table("table");
-	table.del("age", 14, eq).del("male", 0, eq);
-	table.print(0);
+	Table table("table"); ////2/
+	table.insert("Oleg", "Benedictoxygenipropanol", 1, 99);
+	table.print();
 	table.drop();
 }

@@ -114,3 +114,10 @@ void swapPers (Table& table, int pos1, int pos2)
 	table.rows[pos1] = table.rows[pos2];
 	table.rows[pos2] = ps;
 }
+
+void flxcpy (char* to, char* from, int length)
+{
+	for (int i = 0; i < length; i++)
+		to[i] = from[i];
+	to[length-1] = '\0';
+}
