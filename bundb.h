@@ -2,8 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <iomanip>
-#include "utilities.h"
-// #include "models.h" // Cause it's included in utilities.h
+#include "utilities.h" // Constains models.h
 
 using namespace std;
 
@@ -69,14 +68,14 @@ void Table::print (bool fieldNames=1)
 	}
 }
 
-// comps: eq, le, lt, ge, gt, ne(!=), sw(startswith), ew(endsw), in, ni(!in)
+// comps: eq, le, lt, ge, gt, ne, sw, ew, in, ni, ns, nd
 // We can't check validity of functions
+// For all comps, for only fName and sName fields
 Table Table::select (
 	const char* field, const char* value, bool comp(const char*, const char*)
 	)
 {
 	selCheck(field, value);
-	// For all comps, for only fName and sName fields
 	int p = 0;
 	Table newTable;
 	if (strcmp(field, "fName") == 0)
@@ -102,13 +101,12 @@ Table Table::select (
 	return newTable;
 }
 
+// for male and age fields
 Table Table::select (
 	const char* field, const int value, bool comp(const int, const int)
 	)
 {
 	selCheck(field, value);
-	// for male, age fields
-	// for eq, le, lt, ge, gt, ne(!=) comps
 	int p = 0;
 	Table newTable;
 	// Only for eq, ne comps
@@ -122,6 +120,7 @@ Table Table::select (
 			if (comp(value, rows[row].male))
 				newTable.rows[np++] = rows[row];
 	}
+	// for eq, le, lt, ge, gt, ne comps
 	else if (strcmp(field, "age") == 0)
 	{
 		for (int row = 0; row < length; row++)
@@ -135,13 +134,12 @@ Table Table::select (
 	return newTable;
 }
 
-// Just inverted select
+// For all comps, for only fName and sName fields
 Table& Table::del (
 	const char* field, const char* value, bool comp(const char*, const char*)
 	)
 {
 	selCheck(field, value);
-	// For all comps, for only fName and sName fields
 	int p = 0;
 	int newLength;
 	int* rowIdxs;
@@ -174,14 +172,12 @@ Table& Table::del (
 	return *this;
 }
 
-// Just inverted select
+// for male and age fields
 Table& Table::del (
 	const char* field, const int value, bool comp(const int, const int)
 	)
 {
 	selCheck(field, value);
-	// for male, age fields
-	// for eq, le, lt, ge, gt, ne(!=) comps
 	int p = 0;
 	int newLength;
 	int* rowIdxs;
@@ -196,6 +192,7 @@ Table& Table::del (
 			if (!comp(value, rows[row].male))
 				rowIdxs[np++] = row;
 	}
+	// for eq, le, lt, ge, gt, ne comps
 	else if (strcmp(field, "age") == 0)
 	{
 		for (int row = 0; row < length; row++)
@@ -262,15 +259,17 @@ Table& Table::insert (Person* rowList, const int listLength)
 	return *this;
 }
 
-// In asc male sort first will be Female
+// In asc male sort first will go Female
 Table Table::sort (const char* field, const bool asc=1)
 {
 	sortCheck(field);
-	Table tbl = *this;
+	Table tbl;
+	tbl.length = this->length;
+	tbl.rows = this->rows;
 	bool swapped;
 	// Copy-pasting is bad, but I don't know how to perform such action
 	// I use bubble sort, because i need to save rows' order in cases where occur
-	// same values and it will be efficent in multiple sort queries
+	// same values and it will be efficent in sort chain
 	if (field == "fName")
 	{
 		if (asc)
@@ -339,7 +338,8 @@ Table Table::sort (const char* field, const bool asc=1)
 			{
 				swapped = 0;
 				for (int el = 0; el < length-i-1; el++)
-					if (tbl.rows[el].male > tbl.rows[el+1].male) {
+					if (tbl.rows[el].male > tbl.rows[el+1].male)
+					{
 						swapPers(tbl, el, el+1);
 						swapped = 1;
 					}
@@ -369,7 +369,8 @@ Table Table::sort (const char* field, const bool asc=1)
 			{
 				swapped = 0;
 				for (int el = 0; el < length-i-1; el++)
-					if (tbl.rows[el].age > tbl.rows[el+1].age) {
+					if (tbl.rows[el].age > tbl.rows[el+1].age)
+					{
 						swapPers(tbl, el, el+1);
 						swapped = 1;
 					}

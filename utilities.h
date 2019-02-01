@@ -13,7 +13,8 @@ int decLength (int num)
 
 void printLine (int widths[4])
 {
-	for (int w = 0; w < 4; w++) {
+	for (int w = 0; w < 4; w++)
+	{
 		cout << '+';
 		for (int c = 0; c < widths[w]; c++) cout << '-';
 	}
@@ -27,10 +28,6 @@ bool in (const char* word, const char** array, const int length)
 	return 0;
 }
 
-// comps: eq, le, lt, ge, gt, ne(!=), sw(startswith),
-//		ew(endswith), in(contains), ni(!in)
-// fileds: id, fName, sName, male, age
-// Undebugged
 void selCheck (const char* field, const char* value)
 {
 	const char* fields[2] = {"fName", "sName"};
@@ -56,9 +53,6 @@ bool sortCheck (const char* field)
 		throw invalid_argument("Unknown field");
 	return 1;
 }
-
-// comps: eq, le, lt, ge, gt, ne(!=), sw(startswith),
-//		ew(endswith), in(contains), ni(!in)
 
 // For all comps: bool <comp> (<val>, <row member's val>)
 // for sw, ew, in: bool <comp> (<substr>, <str>)
@@ -100,6 +94,8 @@ bool in (const char* a, const char* b)
 	return 0;
 }
 bool ni (const char* a, const char* b) { return !in(a, b); }
+bool ns (const char* a, const char* b) { return !sw(a, b); }
+bool nd (const char* a, const char* b) { return !ew(a, b); }
 
 bool eq (const int a, const int b) { return a == b; }
 bool ne (const int a, const int b) { return a != b; }

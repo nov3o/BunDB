@@ -3,6 +3,7 @@
 
 using namespace std;
 
+// You can use it if you have no table yet
 void load()
 {
 	Person load[] = {
@@ -14,7 +15,7 @@ void load()
 		{"Reimu", "Hakurei", 0, 14},
 		{"Sunn", "Deim", 1, 14},
 		{"Ruri", "Gokou", 0, 14},
-		{"Rekardo", "Milos", 1, 42},
+		{"Ricardo", "Milos", 1, 42},
 	};
 	fstream file("table", ios::binary|ios::out|ios::trunc);
 	file.write((char*)load, sizeof(load));
@@ -24,13 +25,10 @@ void load()
 int main()
 {
 	// load();
+
+	// DB management example
 	Table table("table");
-	Person list[] = {
-		{"John", "Watson", 1, 30},
-		{"Sherlock", "Holmes", 1, 40},
-		{"Qwerty", "Poiu", 0, 43}
-	};
-	table.insert(list, 3);
-	table.print();
-	table.save("table");
+	table.insert("Gregor", "Bthenchik", 1, 27);
+	table.del("age", 50, gt);
+	table.select("sName", "Do", ns).sort("fName").sort("age", 0).print();
 }
