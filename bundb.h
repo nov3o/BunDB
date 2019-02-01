@@ -394,6 +394,14 @@ Table Table::sort (const char* field, const bool asc=1)
 	return tbl;
 }
 
+void Table::save(const char* name)
+{
+	// It rewrites existing data
+	fstream file(name, ios::binary|ios::out|ios::trunc);
+	file.write((char*)rows, sizeof(Person)*length);
+	file.close();
+}
+
 void Table::drop()
 {
 	delete [] rows;

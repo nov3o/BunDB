@@ -24,7 +24,7 @@ void load()
 int main()
 {
 	// load();
-	Table table("table"); ////2/
+	Table table("table");
 	Person list[] = {
 		{"John", "Watson", 1, 30},
 		{"Sherlock", "Holmes", 1, 40},
@@ -32,5 +32,6 @@ int main()
 	};
 	table.insert(list, 3);
 	table.print();
+	table.save("table");
 	table.drop();
 }
