@@ -28,5 +28,4 @@ struct Table{
 	Table& insert(Person*, const int);
 	Table sort(const char*, const bool);
 	void save(const char*);
-	void drop();
 };

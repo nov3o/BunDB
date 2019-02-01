@@ -401,9 +401,3 @@ void Table::save(const char* name)
 	file.write((char*)rows, sizeof(Person)*length);
 	file.close();
 }
-
-void Table::drop()
-{
-	delete [] rows;
-	length = 0;
-}

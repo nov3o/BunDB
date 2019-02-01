@@ -33,5 +33,4 @@ int main()
 	table.insert(list, 3);
 	table.print();
 	table.save("table");
-	table.drop();
 }
